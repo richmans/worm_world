@@ -73,13 +73,14 @@ class World:
     if len(self.foods) > 0: self.nearest_food.fit(self.foods)
     
   def update_food_map(self):
-    self.food_map = []
+    new_food_map = []
     for x in range(0,self.width):
-      self.food_map.append([])
+      new_food_map.append([])
     for food in self.foods:
-      self.food_map[food[0]].append(food[1])
+      new_food_map[food[0]].append(food[1])
     self.nearest_food = NearestNeighbors(1, 100)
     self.nearest_food.fit(self.foods)
+    self.food_map = new_food_map
 
   def update_wall_map(self):
     self.wall_map = []
