@@ -5,12 +5,12 @@ import threading
 import worm
 import random
 import random_controller
-
+import greedy_controller
 class Simulation:
   width = 1000
   height = 1000
   amount_food = 1000
-  num_worms = 10
+  num_worms = 1000
   start_health = 100
   controllers = []
   
@@ -27,7 +27,7 @@ class Simulation:
     print("Woo! %d new worms were born" % len(self.sim_world.worms))
       
   def start_controller(self):
-    self.controllers.append(random_controller.RandomController())
+    self.controllers.append(greedy_controller.GreedyController())
 
   def start(self):    
     self.start_controller();

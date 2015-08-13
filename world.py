@@ -1,5 +1,6 @@
 import random
 from OpenGL.GL import *
+from sklearn.neighbors import NearestNeighbors
 
 class World:
   def __init__(self, width, height, amount_food):
@@ -15,9 +16,13 @@ class World:
   
   def drawFoods(self):
     glColor3f(0.0, 1.0, 0.0)   
-    glBegin(GL_POINTS)
+    size = 0.5
+    glBegin(GL_QUADS)
     for food in self.foods:
-      glVertex2f(food[0], food[1])
+      glVertex2f(food[0] + size, food[1] + size)
+      glVertex2f(food[0] + size, food[1] - size)
+      glVertex2f(food[0] - size, food[1] - size)
+      glVertex2f(food[0] - size , food[1] + size)
     glEnd()
     
   def drawWalls(self):
@@ -28,10 +33,13 @@ class World:
     glEnd()
   
   def drawWorms(self):
-    glColor3f(0.0, 0.0, 1.0)   
-    glBegin(GL_POINTS)
+    glColor3f(0.5, 0.5, 1.0)   
+    size = 1
+    glBegin(GL_TRIANGLES)
     for worm in self.worms:
       glVertex2f(worm.position[0], worm.position[1])
+      glVertex2f(worm.position[0]+size, worm.position[1]+size)
+      glVertex2f(worm.position[0]-size, worm.position[1]+size)
     glEnd()
 
   def draw(self):
@@ -40,10 +48,18 @@ class World:
     self.drawWorms()
     
   def find_nearest_food(self, query_position):
-    pass
+    if len(self.foods) == 0: return None
+    result = self.nearest_food.kneighbors([query_position], 1, return_distance=True)
+    distance = result[0][0][0]
+    food_id = result[1][0]
+    return [distance, self.foods[food_id]]
   
-  def find_nearest_food(self, query_position):
-    pass
+  def find_nearest_wall(self, query_position):
+    if len(self.walls) == 0: return None
+    result = self.nearest_wall.kneighbors([query_position], 1, return_distance=True)
+    distance = result[0][0][0]
+    wall_id = result[1][0]
+    return [distance, self.walls[wall_id]]
     
   def add_worm(self, worm):
     self.worms.append(worm)
@@ -54,6 +70,7 @@ class World:
   def remove_food(self, food_position):
     self.foods.remove(food_position)
     self.food_map[food_position[0]].remove(food_position[1])
+    if len(self.foods) > 0: self.nearest_food.fit(self.foods)
     
   def update_food_map(self):
     self.food_map = []
@@ -61,6 +78,8 @@ class World:
       self.food_map.append([])
     for food in self.foods:
       self.food_map[food[0]].append(food[1])
+    self.nearest_food = NearestNeighbors(1, 100)
+    self.nearest_food.fit(self.foods)
 
   def update_wall_map(self):
     self.wall_map = []
@@ -68,7 +87,9 @@ class World:
       self.wall_map.append([])
     for wall in self.walls:
       self.wall_map[wall[0]].append(wall[1])
-  
+    self.nearest_wall = NearestNeighbors(1, 100)
+    self.nearest_wall.fit(self.walls)
+    
   def is_wall(self, position):
     return position[1] in self.wall_map[position[0]]
   

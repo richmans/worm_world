@@ -9,20 +9,22 @@ class Visualization:
     self.setup()
 
   def refresh2d(self):
-    glViewport(0, 0, self.width, self.height)
+    glViewport(0, 0, self.width * self.zoom, self.height * self.zoom)
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
-    glOrtho(0.0, self.width, 0.0, self.height, 0.0, 1.0)
+    glOrtho(0.0, self.width * self.zoom, 0.0, self.height * self.zoom, 0.0, 1.0)
     glMatrixMode (GL_MODELVIEW)
     glLoadIdentity()
 
   def setup(self):
     self.width = self.world.width
     self.height = self.world.height
-    
+    self.zoom = 1
+    if self.width < 200:
+      self.zoom = 4
     glutInit()                                             # initialize glut
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_ALPHA | GLUT_DEPTH)
-    glutInitWindowSize(self.width, self.height)                      # set window size
+    glutInitWindowSize(self.width * self.zoom, self.height * self.zoom)                      # set window size
     glutInitWindowPosition(0, 0)                           # set window position
     self.window = glutCreateWindow("Worm World")                # create window with title
     glutDisplayFunc(self.draw)                             # set draw function callback
@@ -45,7 +47,9 @@ class Visualization:
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) # clear the screen
     glLoadIdentity()                                   # reset position
     self.refresh2d()  
+    glScalef(self.zoom, self.zoom, self.zoom)
     self.world.draw()                                  # draw the whole world! 
+    
     glutSwapBuffers()                                  # important for double buffering
     
     
