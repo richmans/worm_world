@@ -1,12 +1,6 @@
 import random
-class GreedyController:
-  worms = {}
-  def control_worm(self, worm):
-    worm.controller = self
-    self.worms[worm.id] = worm
-    
-  def handle_event(self, worm_id, command, data):
-    if command == 'sense': self.handle_sense(worm_id, data)
+from worm_controller import WormController
+class GreedyController(WormController):
   
   def determine_direction(self, sensors):
     food_sensors = sensors[0:4]
@@ -30,6 +24,6 @@ class GreedyController:
     if worm == None: return
     direction = self.determine_direction(data)
     direction_character = directions[direction]
-    worm.move(direction_character)
+    self.moves[worm_id] = direction_character
   
   

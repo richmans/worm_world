@@ -4,6 +4,7 @@ class Worm:
   dna = ""
   controller = None
   position = [0,0]
+  alive = True
   
   def __init__(self, id, dna, world, health, position):
     self.id = id
@@ -18,6 +19,7 @@ class Worm:
       
   def kill(self):
     print("Worm %d died at age %d, health %d" % (self.id, self.age, self.health))
+    self.alive = False
     self.send("kill")
     self.world.remove_worm(self)
   
@@ -86,6 +88,7 @@ class Worm:
     return result
     
   def sense(self):
+    if self.alive == False: return
     nearest_food  = self.world.find_nearest_food(self.position)
     nearest_wall  = self.world.find_nearest_wall(self.position)
     food_sensors = self.translate_coordinates(nearest_food)

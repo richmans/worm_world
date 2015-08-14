@@ -65,7 +65,10 @@ class World:
     self.worms.append(worm)
     
   def remove_worm(self, worm):
-    self.worms.remove(worm)
+    try:
+      self.worms.remove(worm)
+    except:
+      pass
   
   def remove_food(self, food_position):
     self.foods.remove(food_position)
@@ -116,7 +119,7 @@ class World:
       self.foods.append([x, y])
     self.update_food_map()
   
-  def simulate_step(self):
+  def sense(self):
     for worm in self.worms[:]:
       worm.sense()
   
