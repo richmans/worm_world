@@ -7,10 +7,10 @@ import random
 import random_controller
 import greedy_controller
 class Simulation:
-  width = 1000
-  height = 1000
-  amount_food = 1000
-  num_worms = 1000
+  width = 100
+  height = 100
+  amount_food = 100
+  num_worms = 10
   start_health = 100
   controllers = []
   
