@@ -1,6 +1,5 @@
 class WormController:
   worms = {}
-  moves = {}
   
   def control_worm(self, worm):
     worm.controller = self
@@ -16,8 +15,3 @@ class WormController:
   def handle_sense(self, worm_id, data):
     pass
   
-  def execute_moves(self):
-    for worm_id in self.worms:
-      worm = self.worms[worm_id]
-      if not worm.alive: continue
-      worm.move(self.moves[worm_id])

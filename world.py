@@ -1,7 +1,7 @@
 import random
 from OpenGL.GL import *
 from sklearn.neighbors import NearestNeighbors
-
+from Queue import Queue
 class World:
   def __init__(self, width, height, amount_food):
     self.foods = []
@@ -11,9 +11,13 @@ class World:
     self.wall_map = []
     self.width = width
     self.height = height
+    self.alive_count = 0
+    self.move_queue = Queue()
+    self.ready_queue = Queue()
+    
     self.generate_walls()
     self.generate_food(amount_food)
-  
+    
   def drawFoods(self):
     glColor3f(0.0, 1.0, 0.0)   
     size = 0.5
@@ -63,13 +67,11 @@ class World:
     
   def add_worm(self, worm):
     self.worms.append(worm)
+    self.alive_count += 1
     
   def remove_worm(self, worm):
-    try:
-      self.worms.remove(worm)
-    except:
-      pass
-  
+    self.alive_count -= 1
+    
   def remove_food(self, food_position):
     self.foods.remove(food_position)
     self.food_map[food_position[0]].remove(food_position[1])
@@ -121,8 +123,26 @@ class World:
   
   def sense(self):
     for worm in self.worms[:]:
-      worm.sense()
+      if worm.alive: worm.sense()
+      
+  def queue_move(self, worm_id, direction):
+      self.move_queue.put((worm_id, direction))
+      if self.move_queue.qsize() >= self.alive_count:
+        self.ready_queue.put("YEAH")
   
+  def do_moves(self):
+    if self.alive_count <= 0: return
+    for i in range(0, self.alive_count):
+      move = self.move_queue.get()
+      worm = self.worms[move[0]]
+      worm.move(move[1])
+      
+  def step(self):
+    self.moves = []
+    self.sense()
+    self.ready_queue.get()
+    self.do_moves()
+    
   def stop(self):
     print("Brutally killing all worms...")
     for worm in self.worms[:]:

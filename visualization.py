@@ -40,7 +40,7 @@ class Visualization:
     glutMainLoop()
 
   def check_exit(self):
-    if len(self.world.worms) == 0:  sys.exit(0)
+    if self.world.alive_count == 0:  sys.exit(0)
     
   def draw(self):
     self.check_exit()

@@ -6,5 +6,5 @@ class RandomController(WormController):
     worm = self.worms[worm_id]
     if worm == None: return
     direction = directions[random.randrange(0, 4)]
-    self.moves[worm_id] = direction
+    worm.queue_move(direction)
   

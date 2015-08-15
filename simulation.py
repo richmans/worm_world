@@ -12,10 +12,10 @@ from random_controller import RandomController
 from greedy_controller import GreedyController
 
 class Simulation:
-  width = 100
-  height = 100
-  amount_food = 100
-  num_worms = 10
+  width = 1000
+  height = 1000
+  amount_food = 1000
+  num_worms = 100
   start_health = 100
   controllers = []
   
@@ -47,9 +47,8 @@ class Simulation:
   def run_world(self):  
     while True:
       #sleep(0.1)
-      self.sim_world.sense()
-      self.controllers[0].execute_moves()
-      if len(self.sim_world.worms) == 0: break
+      self.sim_world.step()
+      if self.sim_world.alive_count == 0: break
     print("WormWorld just became very silent")
       
 Simulation().start()

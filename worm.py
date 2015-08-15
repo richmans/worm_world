@@ -18,6 +18,7 @@ class Worm:
       self.controller.handle_event(self.id, command, data)
       
   def kill(self):
+    if not self.alive: return
     print("Worm %d died at age %d, health %d" % (self.id, self.age, self.health))
     self.alive = False
     self.send("kill")
@@ -45,6 +46,9 @@ class Worm:
   def check_health(self):
     if self.health <= 0:
       self.kill()
+    
+  def queue_move(self, direction):
+    self.world.queue_move(self.id, direction)
       
   def move(self, direction):
     self.update_position(direction)

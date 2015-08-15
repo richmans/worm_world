@@ -24,6 +24,6 @@ class GreedyController(WormController):
     if worm == None: return
     direction = self.determine_direction(data)
     direction_character = directions[direction]
-    self.moves[worm_id] = direction_character
+    worm.queue_move(direction_character)
   
   
