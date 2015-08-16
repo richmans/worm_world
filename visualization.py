@@ -4,8 +4,8 @@ from OpenGL.GLU import *
 import sys
 
 class Visualization:
-  def __init__(self, world):
-    self.world = world
+  def __init__(self, simulation):
+    self.simulation = simulation
     self.setup()
 
   def refresh2d(self):
@@ -17,8 +17,8 @@ class Visualization:
     glLoadIdentity()
 
   def setup(self):
-    self.width = self.world.width
-    self.height = self.world.height
+    self.width = self.simulation.width
+    self.height = self.simulation.height
     self.zoom = 1
     if self.width < 200:
       self.zoom = 4
@@ -33,22 +33,23 @@ class Visualization:
   
   def handle_keyboard(self, key, x, y):
     if key == 'q':
-      self.world.stop()
+      self.simulation.stop()
 
     
   def run(self):
     glutMainLoop()
 
   def check_exit(self):
-    if self.world.alive_count == 0:  sys.exit(0)
+    if self.simulation.finished:  sys.exit(0)
     
   def draw(self):
+    if self.simulation.sim_world == None: return
     self.check_exit()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) # clear the screen
     glLoadIdentity()                                   # reset position
     self.refresh2d()  
     glScalef(self.zoom, self.zoom, self.zoom)
-    self.world.draw()                                  # draw the whole world! 
+    self.simulation.sim_world.draw()                                  # draw the whole world! 
     
     glutSwapBuffers()                                  # important for double buffering
     

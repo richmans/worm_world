@@ -5,13 +5,15 @@ class Worm:
   controller = None
   position = [0,0]
   alive = True
+  smell_range = 0
   
-  def __init__(self, id, dna, world, health, position):
+  def __init__(self, id, dna, world, health, position, smell_range):
     self.id = id
     self.world = world
     self.dna = dna
     self.health = health
     self.position = position
+    self.smell_range = smell_range
     
   def send(self, command, data = None):
     if self.controller != None:
@@ -65,11 +67,14 @@ class Worm:
     if target == None or target[0] == 0: 
       return result
     distance, coordinates = target
+    if distance > self.smell_range:
+      return result
     delta_x = coordinates[0] - self.position[0]
     delta_y = coordinates[1] - self.position[1]
     if delta_y == 0:
       ratio = 1
     elif delta_x == 0:
+      # crazy hack
       ratio = 0.000000000001
     else:
       ratio = float(abs(delta_x)) / (abs(delta_x) +  abs(delta_y))

@@ -133,19 +133,25 @@ class World:
   def do_moves(self):
     if self.alive_count <= 0: return
     for i in range(0, self.alive_count):
-      move = self.move_queue.get()
+      try:
+        move = self.move_queue.get(1)
+      except Empty:
+        print("The move queue was missing some elements...")
+        return
       worm = self.worms[move[0]]
       worm.move(move[1])
       
   def step(self):
     self.moves = []
     self.sense()
-    self.ready_queue.get()
+    status = self.ready_queue.get()
+    if status == "stop": return
     self.do_moves()
     
   def stop(self):
     print("Brutally killing all worms...")
     for worm in self.worms[:]:
       worm.kill()
+    self.ready_queue.put("stop")
   
   
