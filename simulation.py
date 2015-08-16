@@ -17,7 +17,7 @@ class Simulation:
   width = 100
   height = 100
   amount_food = 100
-  num_worms = 10
+  num_worms = 100
   start_health = 100
   smell_range = 10
   controllers = []
@@ -25,6 +25,7 @@ class Simulation:
   sim_world = None
   slomo = 0
   enable_visualization = False
+  test_controller = GreedyController()
   def assign_controllers(self, generation):
     for worm in generation.worms:
       self.controllers[0].control_worm(worm)
@@ -37,7 +38,7 @@ class Simulation:
     self.sim_world.stop()
     
   def start(self):    
-    self.controllers.append(RemoteController())
+    self.controllers.append(self.test_controller)
     
     # this will block until self.finished == True
     if self.enable_visualization:
@@ -72,5 +73,6 @@ class Simulation:
         print("ERRORRRR")
       if self.sim_world.alive_count == 0: break
     print("WormWorld just became very silent")
+    self.sim_world.stop()
       
 Simulation().start()
