@@ -15,3 +15,5 @@ class WormController:
   def handle_sense(self, worm_id, data):
     pass
   
+  def stop(self):
+    pass

@@ -10,6 +10,7 @@ from world import World
 from visualization import Visualization
 from random_controller import RandomController
 from greedy_controller import GreedyController
+from remote_controller import RemoteController
 from generation import Generation
 
 class Simulation:
@@ -22,19 +23,29 @@ class Simulation:
   controllers = []
   finished = False
   sim_world = None
+  slomo = 0
+  enable_visualization = False
   def assign_controllers(self, generation):
     for worm in generation.worms:
       self.controllers[0].control_worm(worm)
-    
+  
+  def stop_controllers(self):
+    for controller in self.controllers:
+      controller.stop()
+      
   def stop(self):
     self.sim_world.stop()
     
   def start(self):    
-    self.controllers.append(GreedyController())
-    self.sim_visualization = Visualization(self)
-    self.thread = Thread(None, self.run, "World").start()
+    self.controllers.append(RemoteController())
+    
     # this will block until self.finished == True
-    self.sim_visualization.run()
+    if self.enable_visualization:
+      self.thread = Thread(None, self.run, "World").start()
+      self.sim_visualization = Visualization(self)
+      self.sim_visualization.run()
+    else:
+      self.run()
 
   def initialize_generation(self):
     # a new world
@@ -49,12 +60,13 @@ class Simulation:
     self.initialize_generation()
     self.run_world()
     print("Bye")
+    self.stop_controllers()
     self.finished = True
   
   def run_world(self):  
     while True:
       try:
-        sleep(0.1)
+        if self.slomo: sleep(self.slomo)
         self.sim_world.step()
       except:
         print("ERRORRRR")
